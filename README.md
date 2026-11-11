@@ -61,6 +61,12 @@ hors du dossier doit échouer.
 Réglages propres à chaque machine, hors dépôt : `donnees/lancer.local` (destinataire, dossiers),
 `donnees/anonymiser.local` (termes à remplacer), `programmer-mail.local` (accès à la file des mails).
 
+L'agent peut aussi tourner sur la machine du manager elle-même (`MACHINE_DU_MANAGER=1` : ses commandes y sont lancées
+directement, sans ssh) et confier le seul passage de Claude à un lanceur qui le fait tourner ailleurs (`CLAUDE_CMD`) :
+par exemple un poste prêté, sur lequel le dossier de travail est copié, puis effacé et vérifié à la fin. `JETON_FICHIER`
+et `CONFIG_CLAUDE` (avec `%s` pour le compte) disent où lire le jeton et où ranger les transcriptions.
+`deployer.sh local` installe le code sur la machine courante.
+
 ## Coût
 Un passage par nuit avec Claude Opus, effort élevé, 90 minutes au plus : de l'ordre de 0,1 à 0,5 % du quota hebdomadaire
 d'un abonnement Claude Max par nuit. Le dossier de travail porte un nom fixe pour que ce coût soit compté à part.

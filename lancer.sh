@@ -35,6 +35,10 @@ fi
 exec 9>/tmp/chercheur-management.lock; flock -n 9 || { echo "un passage tourne déjà"; exit 1; }
 
 DEST=""; VPS_DIR=""; MANAGER_DIR=""; MANAGER_CONFIGS=""; BOITE_IDENTIFIANTS=""; SIGNALER=""
+# Machine de l'agent (11/11) : par défaut une machine à part qui joint celle du manager par ssh (alias « vps ») et lance
+# claude elle-même. Sur la machine du manager : MACHINE_DU_MANAGER=1 (commandes locales) ; CLAUDE_CMD peut alors être un
+# lanceur qui fait tourner le passage ailleurs (perso-claude : poste prêté, copie de travail effacée et vérifiée).
+MACHINE_DU_MANAGER=""; CLAUDE_CMD=claude; JETON_FICHIER="$HOME/.claude-%s/.oauth-token"; CONFIG_CLAUDE="$HOME/.claude-%s"
 [ -f "$ICI/donnees/lancer.local" ] && . "$ICI/donnees/lancer.local"
 [ -n "$VPS_DIR" ] && [ -n "$MANAGER_DIR" ] && [ -n "$MANAGER_CONFIGS" ] || { echo "donnees/lancer.local incomplet (VPS_DIR, MANAGER_DIR, MANAGER_CONFIGS)"; exit 2; }
 W="$HOME/chercheur-management-passe"      # dossier de travail de Claude (son nom sert à compter le coût)
@@ -44,14 +48,16 @@ log() { echo "$*" >> "$L"; }
 log "début $(date -u +%FT%TZ) mode $MODE"
 [ -f "$D/pistes.json" ] || echo "[]" > "$D/pistes.json"
 find "$D/logs" "$D/rapports" -type f -mtime +30 -delete 2>/dev/null
-SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 vps"
+distant() {  # commande sur la machine du manager (comme ssh : arguments joints par des espaces, entrée standard transmise)
+  if [ -n "$MACHINE_DU_MANAGER" ]; then bash -c "$*"; else ssh -o BatchMode=yes -o ConnectTimeout=15 vps "$*"; fi
+}
 
 # 1. Réponses de l'utilisateur aux mails précédents (« oui M1211-1 », « non M1211-2 ») ; un oui = signal au manager
 if [ "$MODE" = passe ]; then
-  if $SSH "BOITE_IDENTIFIANTS='$BOITE_IDENTIFIANTS' python3 $VPS_DIR/lire-reponses.py" > "$D/reponses.json" 2>> "$L"; then
+  if distant "BOITE_IDENTIFIANTS='$BOITE_IDENTIFIANTS' python3 $VPS_DIR/lire-reponses.py" > "$D/reponses.json" 2>> "$L"; then
     python3 "$ICI/pistes.py" reponses "$D/pistes.json" "$D/reponses.json" > "$D/reponses.out" 2>> "$L"; cat "$D/reponses.out" >> "$L"
     [ -n "$SIGNALER" ] && grep '^RETENUE ' "$D/reponses.out" | while read -r _ id titre; do
-      $SSH "$SIGNALER" "'Chercheur du management : piste $id retenue'" \
+      distant "$SIGNALER" "'Chercheur du management : piste $id retenue'" \
         "'$(printf %s "$titre" | tr -d "'\"\\\\" | cut -c1-200) : oui de l utilisateur ; prochaine etape = le petit essai decrit dans le mail (rien ne change avant)'" \
         --source chercheur-management >> "$L" 2>&1 || log "signal au manager non déposé pour $id"
     done
@@ -62,14 +68,14 @@ fi
 
 # 2. La journée et les règles du manager, en brut (effacé dès l'anonymisation)
 B="$D/brut"; rm -rf "$B"; mkdir -p "$B/regles"
-if ! $SSH "MANAGER_DOSSIER='$MANAGER_DIR' MANAGER_CONFIGS='$MANAGER_CONFIGS' python3 $VPS_DIR/extraire-journee.py --heures 24" > "$B/journee.md" 2>> "$L" || [ "$(wc -c < "$B/journee.md")" -lt 500 ]; then
+if ! distant "MANAGER_DOSSIER='$MANAGER_DIR' MANAGER_CONFIGS='$MANAGER_CONFIGS' python3 $VPS_DIR/extraire-journee.py --heures 24" > "$B/journee.md" 2>> "$L" || [ "$(wc -c < "$B/journee.md")" -lt 500 ]; then
   rm -rf "$B"; log "journée non relevée (machine du manager injoignable) : nouvel essai au rattrapage suivant"; log "fin passe : code 4 $(date -u +%FT%TZ)"; exit 4
 fi
 for f in CLAUDE.md privileges.md delegation.md; do
-  $SSH "cat $MANAGER_DIR/$f" > "$B/regles/$f" 2>> "$L" || log "règle $f non recopiée"
+  distant "cat $MANAGER_DIR/$f" > "$B/regles/$f" 2>> "$L" || log "règle $f non recopiée"
 done
 mv "$B/regles/CLAUDE.md" "$B/regles/CLAUDE-manager.md" 2>/dev/null
-$SSH "timeout 90 python3 $MANAGER_DIR/cout-taches.py semaine" > "$B/couts-semaine.txt" 2>> "$L" || log "coûts non relevés"
+distant "timeout 90 python3 $MANAGER_DIR/cout-taches.py semaine" > "$B/couts-semaine.txt" 2>> "$L" || log "coûts non relevés"
 
 # 3. Anonymisation, puis dossier de travail : le contexte anonyme, l'historique, la consigne, le seul fichier qu'il écrit
 rm -rf "$W"; mkdir -p "$W/sortie" "$W/contexte"
@@ -89,23 +95,28 @@ export DATE="$J"
 perl -pe 's/\{\{(\w+)\}\}/$ENV{$1}/g' "$CONS" > "$D/logs/$J.consigne.md"
 
 # 4. Compte : le compte actif (compte-agents de la machine du manager)
-CPT=$($SSH /usr/local/bin/compte-agents 2>/dev/null | tr -d "[:space:]"); CPT=${CPT:-$($SSH cat $MANAGER_DIR/compte-actif 2>/dev/null | tr -d "[:space:]")}
-TOK="$HOME/.claude-$CPT/.oauth-token"
+CPT=$(distant /usr/local/bin/compte-agents 2>/dev/null | tr -d "[:space:]"); CPT=${CPT:-$(distant cat $MANAGER_DIR/compte-actif 2>/dev/null | tr -d "[:space:]")}
+TOK=$(printf "$JETON_FICHIER" "$CPT"); CFG=$(printf "$CONFIG_CLAUDE" "$CPT"); mkdir -p "$CFG"
+jeton() { if [[ "$TOK" == *.env ]]; then grep -oP '(?<=CLAUDE_CODE_OAUTH_TOKEN=).*' "$TOK" | tr -d "\"'"; else cat "$TOK"; fi; }
 if [ -z "$CPT" ] || [ ! -s "$TOK" ]; then rm -rf "$W"; log "compte « $CPT » non connecté sur cette machine"; log "fin passe : code 3 $(date -u +%FT%TZ)"; exit 3; fi
 touch "$D/logs/$J.lance"
 SID=$(cat /proc/sys/kernel/random/uuid); echo "$SID" > "$D/logs/$J.session"
-SESSF="$HOME/.claude-$CPT/projects/$(echo "$W" | sed 's#[/.]#-#g')/$SID.jsonl"
+SESSF="$CFG/projects/$(echo "$W" | sed 's#[/.]#-#g')/$SID.jsonl"
 GARDE="{\"hooks\":{\"PreToolUse\":[{\"matcher\":\"WebSearch|WebFetch\",\"hooks\":[{\"type\":\"command\",\"command\":\"python3 $ICI/garde-recherche.py\"}]}]}}"
 lance() {  # lance <consigne> <--session-id|--resume>
   log "claude $MOD ($EFF) compte $CPT $2 $(date -u +%FT%TZ)"
-  ( cd "$W" && env -u ANTHROPIC_API_KEY -u CLAUDECODE CLAUDE_CONFIG_DIR="$HOME/.claude-$CPT" CLAUDE_CODE_OAUTH_TOKEN="$(cat "$TOK")" \
+  ( cd "$W" && env -u ANTHROPIC_API_KEY -u CLAUDECODE CLAUDE_CONFIG_DIR="$CFG" CLAUDE_CODE_OAUTH_TOKEN="$(jeton)" \
       GARDE_LISTE="$G" GARDE_JOURNAL="$D/logs/$J.garde.jsonl" \
-      timeout 90m claude -p "$(cat "$1")" --model "$MOD" --effort "$EFF" --settings "$GARDE" \
+      PERSO_NOM=chercheur-management PERSO_FICHIERS="$ICI/garde-recherche.py" PERSO_ENV="GARDE_LISTE GARDE_JOURNAL" \
+      timeout 90m "$CLAUDE_CMD" -p "$(cat "$1")" --model "$MOD" --effort "$EFF" --settings "$GARDE" \
       --allowedTools "WebSearch" "WebFetch" "Edit(/sortie/rapport.json)" \
       --disallowedTools "Bash" $2 "$SID" < /dev/null ) >> "$C" 2>&1
-  log "claude fini : code $? $(date -u +%FT%TZ)"
+  RC=$?; log "claude fini : code $RC $(date -u +%FT%TZ)"
 }
 lance "$D/logs/$J.consigne.md" --session-id
+if [ "$RC" = 75 ]; then   # lanceur sur machine prêtée : aucune machine libre (ou reprise par son propriétaire) → rattrapage suivant
+  rm -f "$D/logs/$J.lance"; rm -rf "$W"; log "aucune machine libre pour le passage : nouvel essai au rattrapage suivant"; log "fin passe : code 6 $(date -u +%FT%TZ)"; exit 6
+fi
 
 # 5. Contrôle du critère par programme ; une reprise au plus si quelque chose manque
 verif() { python3 "$ICI/verifier.py" "$W/sortie/rapport.json" "$D/pistes.json" "$W/contexte/journee.md" "$SESSF" $PL > "$D/logs/$J.verif.json" 2>> "$L"; }
@@ -137,8 +148,8 @@ OK=$(python3 -c "import json;print(1 if json.load(open('$D/logs/$J.verif.json'))
 SUJET=$(python3 -c "import json;print(json.load(open('$D/rapports/$J.json'))['sujet'])" 2>/dev/null || echo "Management, rien de solide cette nuit")
 if [ "$MODE" = passe ] && [ -n "$DEST" ] && [ -s "$D/rapports/$J.html" ]; then
   if [ "$(TZ=Europe/Paris date +%H%M)" -lt 0655 ]; then QUAND="--at ${J}T07:00"; else QUAND="--in 2m"; fi
-  if $SSH "mkdir -p $VPS_DIR/mails && find $VPS_DIR/mails -name '*.html' -mtime +30 -delete; cat > $VPS_DIR/mails/$J.html" < "$D/rapports/$J.html" \
-     && $SSH "$VPS_DIR/programmer-mail.sh $J '$DEST' $(printf %s "$SUJET" | base64 -w0) $QUAND" >> "$L" 2>&1; then
+  if distant "mkdir -p $VPS_DIR/mails && find $VPS_DIR/mails -name '*.html' -mtime +30 -delete; cat > $VPS_DIR/mails/$J.html" < "$D/rapports/$J.html" \
+     && distant "$VPS_DIR/programmer-mail.sh $J '$DEST' $(printf %s "$SUJET" | base64 -w0) $QUAND" >> "$L" 2>&1; then
     touch "$D/rapports/$J.envoye"; log "mail programmé ($QUAND)"
   else
     log "mail non programmé (machine du manager injoignable ou file des mails refusée)"

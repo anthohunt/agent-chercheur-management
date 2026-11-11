@@ -14,8 +14,9 @@ def norm(t):
 def main():
     try:
         e = json.load(sys.stdin)
-    except ValueError:
-        sys.exit(0)
+    except ValueError:  # entrée illisible : on refuse par prudence
+        print("Recherche refusée (entrée illisible par la garde).", file=sys.stderr)
+        sys.exit(2)
     i = e.get("tool_input") or {}
     texte = " ".join(str(i.get(k, "")) for k in ("query", "url", "allowed_domains", "blocked_domains"))
     n = norm(texte)

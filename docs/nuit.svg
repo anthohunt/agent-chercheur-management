@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="560" viewBox="0 0 880 560" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="fond" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f1b33"/><stop offset="1" stop-color="#1b2c4f"/>
+    </linearGradient>
+    <linearGradient id="carte" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef2f8"/>
+    </linearGradient>
+    <filter id="ombre" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <marker id="fleche" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8fb3ff"/>
+    </marker>
+  </defs>
+  <rect width="880" height="560" rx="18" fill="url(#fond)"/>
+  <g stroke="#2a3d66" stroke-width="1">
+    <path d="M0 140 H880 M0 280 H880 M0 420 H880 M220 0 V560 M440 0 V560 M660 0 V560" opacity="0.5"/>
+  </g>
+  <text x="32" y="48" fill="#ffffff" font-size="24" font-weight="700">Une nuit du chercheur</text>
+  <text x="32" y="74" fill="#a9bbdc" font-size="14">De la journée du manager au mail de 7 h : ce qui se passe, dans l'ordre.</text>
+
+  <!-- ligne 1 -->
+  <g filter="url(#ombre)">
+    <rect x="24" y="104" width="264" height="178" rx="12" fill="url(#carte)"/>
+    <rect x="308" y="104" width="264" height="178" rx="12" fill="url(#carte)"/>
+    <rect x="592" y="104" width="264" height="178" rx="12" fill="url(#carte)"/>
+    <rect x="24" y="338" width="264" height="178" rx="12" fill="url(#carte)"/>
+    <rect x="308" y="338" width="264" height="178" rx="12" fill="url(#carte)"/>
+    <rect x="592" y="338" width="264" height="178" rx="12" fill="url(#carte)"/>
+  </g>
+  <g font-size="12" font-weight="700" fill="#ffffff">
+    <rect x="40" y="120" width="56" height="22" rx="11" fill="#2f5fd0"/><text x="68" y="135" text-anchor="middle">4 h 40</text>
+    <rect x="324" y="120" width="26" height="22" rx="11" fill="#2f5fd0"/><text x="337" y="135" text-anchor="middle">2</text>
+    <rect x="608" y="120" width="26" height="22" rx="11" fill="#2f5fd0"/><text x="621" y="135" text-anchor="middle">3</text>
+    <rect x="40" y="354" width="26" height="22" rx="11" fill="#2f5fd0"/><text x="53" y="369" text-anchor="middle">4</text>
+    <rect x="324" y="354" width="44" height="22" rx="11" fill="#d0662f"/><text x="346" y="369" text-anchor="middle">7 h</text>
+    <rect x="608" y="354" width="26" height="22" rx="11" fill="#2f5fd0"/><text x="621" y="369" text-anchor="middle">6</text>
+  </g>
+  <g fill="#14213d" font-size="17" font-weight="700">
+    <text x="106" y="137">Relever la journée</text>
+    <text x="360" y="137">Anonymiser</text>
+    <text x="644" y="137">Chercher en ligne</text>
+    <text x="76" y="371">Contrôler</text>
+    <text x="378" y="371">Le mail</text>
+    <text x="644" y="371">Ta réponse</text>
+  </g>
+  <g fill="#3d4a63" font-size="13.5">
+    <text x="40" y="170">Les 24 dernières heures :</text>
+    <text x="40" y="190">conversations du manager,</text>
+    <text x="40" y="210">messages des sessions, journal,</text>
+    <text x="40" y="230">signaux, règles et délégation,</text>
+    <text x="40" y="250">coût de la semaine.</text>
+
+    <text x="324" y="170">Noms, organisations, adresses,</text>
+    <text x="324" y="190">identifiants remplacés par</text>
+    <text x="324" y="210">[personne], [employeur], [lien]…</text>
+    <text x="324" y="230">La copie brute est effacée</text>
+    <text x="324" y="250">avant que l'agent ne démarre.</text>
+
+    <text x="608" y="170">Au moins 6 recherches et</text>
+    <text x="608" y="190">8 pages lues, sans shell, sans</text>
+    <text x="608" y="210">accès hors de son dossier.</text>
+    <text x="608" y="230">Une garde refuse toute recherche</text>
+    <text x="608" y="250">qui contient un mot du contexte.</text>
+
+    <text x="40" y="404">Par programme, pour chaque piste :</text>
+    <text x="40" y="424">le fait de la veille cité mot pour</text>
+    <text x="40" y="444">mot, la preuve, un exemple chiffré,</text>
+    <text x="40" y="464">un essai sans risque, des sources</text>
+    <text x="40" y="484">qui répondent. Une reprise au plus.</text>
+
+    <text x="324" y="404">1 à 3 pistes, chacune numérotée</text>
+    <text x="324" y="424">(M1211-1…). Une nuit sans piste</text>
+    <text x="324" y="444">solide : une seule ligne,</text>
+    <text x="324" y="464">« rien de solide cette nuit ».</text>
+
+    <text x="608" y="404">« oui M1211-1 », « non M1211-2 »</text>
+    <text x="608" y="424">en répondant au mail. Un oui</text>
+    <text x="608" y="444">prévient le manager : le petit</text>
+    <text x="608" y="464">essai d'abord, rien ne change</text>
+    <text x="608" y="484">dans le système sans ton oui.</text>
+  </g>
+  <g stroke="#8fb3ff" stroke-width="2.5" fill="none" marker-end="url(#fleche)">
+    <path d="M290 193 H304"/>
+    <path d="M574 193 H588"/>
+    <path d="M724 284 V304 Q724 312 716 312 H164 Q156 312 156 320 V334"/>
+    <path d="M290 427 H304"/>
+    <path d="M574 427 H588"/>
+  </g>
+  <text x="440" y="545" fill="#a9bbdc" font-size="12.5" text-anchor="middle">Tout tourne sur une machine à part ; la machine du manager ne fait que fournir la journée et poster le mail.</text>
+</svg>

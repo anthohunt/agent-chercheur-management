@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="640" viewBox="0 0 880 640" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="ombre" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0f1b33" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <rect width="880" height="640" rx="18" fill="#e7ecf4"/>
+  <g filter="url(#ombre)">
+    <rect x="40" y="32" width="800" height="580" rx="14" fill="#ffffff"/>
+  </g>
+  <rect x="40" y="32" width="800" height="44" rx="14" fill="#1b2c4f"/>
+  <rect x="40" y="62" width="800" height="14" fill="#1b2c4f"/>
+  <circle cx="64" cy="54" r="6" fill="#d0662f"/><circle cx="84" cy="54" r="6" fill="#e3b341"/><circle cx="104" cy="54" r="6" fill="#4caf7d"/>
+  <text x="440" y="59" fill="#a9bbdc" font-size="13" text-anchor="middle">Boîte de réception · 07:00</text>
+
+  <text x="72" y="116" fill="#2f3437" font-size="21" font-weight="700">Management, pistes du 12/11 (1)</text>
+  <text x="72" y="142" fill="#4b4b4b" font-size="14">Une piste : moins de relances quand une session attend une réponse depuis longtemps.</text>
+  <rect x="72" y="158" width="736" height="48" rx="7" fill="#f1f1ef"/>
+  <text x="88" y="178" fill="#2f3437" font-size="13.5" font-weight="700">Pour décider</text>
+  <text x="174" y="178" fill="#2f3437" font-size="13.5">: réponds à ce mail, une ligne par décision, « oui » ou « non »</text>
+  <text x="88" y="196" fill="#2f3437" font-size="13.5">suivi du numéro de la piste. Rien ne change sans ton oui ; un oui lance d'abord le petit essai.</text>
+
+  <rect x="72" y="222" width="736" height="370" rx="10" fill="#ffffff" stroke="#e3e2e0" stroke-width="1.5"/>
+  <text x="90" y="250" fill="#2f3437" font-size="13" font-weight="700">M1211-1</text>
+  <text x="152" y="250" fill="#6b6b6b" font-size="13">·  Suivi des sessions et des agents  ·  effort petit</text>
+  <text x="90" y="276" fill="#2f3437" font-size="17" font-weight="700">Exemple de titre de piste, en quelques mots</text>
+  <rect x="90" y="292" width="3" height="46" fill="#d9d6d0"/>
+  <text x="102" y="306" fill="#6b6b6b" font-size="13">Hier, dans le journal du manager</text>
+  <text x="102" y="326" fill="#4b4b4b" font-size="13.5" font-style="italic">« la session … attend la réponse de l'utilisateur depuis 12 h »</text>
+
+  <g font-size="13">
+    <text x="90" y="364" fill="#6b6b6b">Ce que ça changerait</text>
+    <rect x="90" y="372" width="560" height="9" rx="4" fill="#e6e9ef"/>
+    <text x="90" y="404" fill="#6b6b6b">La preuve : l'article ou le retour d'expérience, ce qu'il a démontré, sur quoi, avec quels chiffres</text>
+    <rect x="90" y="412" width="680" height="9" rx="4" fill="#e6e9ef"/><rect x="90" y="427" width="420" height="9" rx="4" fill="#e6e9ef"/>
+    <text x="90" y="460" fill="#6b6b6b">Sur notre système, en chiffres : aujourd'hui, avec la piste, le gain et son calcul</text>
+    <rect x="90" y="468" width="640" height="9" rx="4" fill="#e6e9ef"/><rect x="90" y="483" width="300" height="9" rx="4" fill="#e6e9ef"/>
+    <text x="90" y="516" fill="#6b6b6b">L'essayer sans risque : sur quelles données, ce qu'on mesure, ce qui dirait « ça marche »</text>
+    <rect x="90" y="524" width="600" height="9" rx="4" fill="#e6e9ef"/>
+    <text x="90" y="560" fill="#6b6b6b">Sources</text>
+    <text x="90" y="580" fill="#2f5fd0" text-decoration="underline">Titre de la page lue, avec sa date et le passage qui appuie la piste</text>
+  </g>
+</svg>

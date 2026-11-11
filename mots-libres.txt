@@ -1,0 +1,9 @@
+# Mots propres qui peuvent figurer dans une recherche web (outils, produits, notions générales) : jamais bloqués par
+# la garde, même s'ils apparaissent en majuscule dans la journée.
+Claude Code Anthropic Opus Sonnet Haiku Fable Max Pro Remote Control Agent Agents SDK API MCP CLI SSH VPS GPU CPU RAM
+Google Drive Gmail Calendar Tasks Docs Sheets Slides Workspace GitHub GitLab Git Linux Ubuntu Windows WSL Python Node JavaScript
+Telegram WhatsApp Slack Discord Teams Zoom Tailscale Docker Kubernetes Playwright Chromium Chrome Firefox Edge
+OpenAI ChatGPT Codex GPT Gemini Llama Mistral Qwen DeepSeek Ollama LangGraph LangChain CrewAI AutoGen DSPy GEPA
+Unity Meta Quest Android iOS Hostinger Yahoo Outlook Thunderbird Notion Trello Jira Asana Linear PagerDuty Grafana
+LLM LLMs SLM SRE DevOps HITL RAG JSON HTML CSS SQL HTTP HTTPS URL IMAP SMTP OAuth PDF README
+UTC UUID WebSearch WebFetch SendMessage PushNotification ToolSearch TaskStop ListAgents Artifact Bing Obsidian NTFS Kimi GLM IDs JSONL AAAA YYYY

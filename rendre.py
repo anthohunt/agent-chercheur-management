@@ -22,8 +22,9 @@ def main():
     P = r.get("pistes", [])
     if not P:
         open(sys.argv[3], "w", encoding="utf-8").write(
-            '<div style="%s">Rien de solide cette nuit : aucune piste n\'a réuni sa preuve, son exemple chiffré et son essai sans risque.</div>' % POLICE)
-        print("**Rien de solide cette nuit : %s**" % " ; ".join(r.get("manque", []))[:300])
+            ('<div style="%s">Rien de solide %s : aucune piste n\'a réuni sa preuve, son exemple chiffré et son essai sans risque.</div>'
+             % (POLICE, "à ce passage de 14 h" if r.get("creneau") else "cette nuit")))
+        print("**Rien de solide %s : %s**" % ("à 14 h" if r.get("creneau") else "cette nuit", " ; ".join(r.get("manque", []))[:300]))
         return
     h = ['<div style="%s;max-width:680px">' % POLICE, '<h2 style="font-size:20px;margin:0 0 4px">%s</h2>' % E(r["sujet"])]
     if r.get("resume"):

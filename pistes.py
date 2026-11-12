@@ -74,7 +74,8 @@ def reponses(f, rf):
         decider(f, r["id"], r["decision"], r.get("citation", ""), r.get("date"))
 
 
-def enregistrer(f, vf, j, sortie):
+def enregistrer(f, vf, j, sortie, creneau=""):
+    """creneau « -14h » : passage de l'après-midi (mode poussé du 12/11) ; numéros à la suite de ceux de la nuit."""
     P = lire(f)
     v = json.load(open(vf, encoding="utf-8"))
     pref = "M" + j[8:10] + j[5:7]
@@ -88,9 +89,10 @@ def enregistrer(f, vf, j, sortie):
         nouvelles.append(x)
     ecrire(f, P + nouvelles)
     jj = datetime.date.fromisoformat(j)
-    sujet = ("Management, pistes du %s (%d)" % (jj.strftime("%d/%m"), len(nouvelles))) if nouvelles \
-        else "Management, rien de solide cette nuit (%s)" % jj.strftime("%d/%m")
-    ecrire(sortie, {"date": j, "sujet": sujet, "ok": v.get("ok", False), "resume": v.get("resume", ""),
+    quand = "de 14 h " if creneau else ""
+    sujet = ("Management, pistes %sdu %s (%d)" % (quand, jj.strftime("%d/%m"), len(nouvelles))) if nouvelles \
+        else "Management, rien de solide %s(%s)" % ("à 14 h " if creneau else "cette nuit ", jj.strftime("%d/%m"))
+    ecrire(sortie, {"date": j, "creneau": creneau, "sujet": sujet, "ok": v.get("ok", False), "resume": v.get("resume", ""),
                     "pistes": nouvelles, "ecartees": v.get("ecartees", []), "manque": v.get("manque", []),
                     "effort": v.get("effort", {}), "suivi": v.get("suivi", []),
                     "retenues": [p for p in P if p.get("statut") == "oui"]})
@@ -103,4 +105,4 @@ if __name__ == "__main__":
         sys.exit(__doc__)
     {"historique": lambda: historique(a[1]), "reponses": lambda: reponses(a[1], a[2]),
      "decider": lambda: decider(a[1], a[2], a[3], a[4] if len(a) > 4 else ""),
-     "enregistrer": lambda: enregistrer(a[1], a[2], a[3], a[4])}[a[0]]()
+     "enregistrer": lambda: enregistrer(a[1], a[2], a[3], a[4], a[5] if len(a) > 5 else "")}[a[0]]()

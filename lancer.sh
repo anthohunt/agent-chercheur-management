@@ -15,7 +15,7 @@
 #
 # Usage : lancer.sh            passage normal (seulement entre 4 h et 6 h, une fois par jour, sauf FORCE=1)
 #         lancer.sh 14h        passage de l'après-midi sur la matinée écoulée (entre 14 h et 17 h, une fois par jour ;
-#                              mode poussé décidé par l'utilisateur le 12/11, jusqu'au 15/11 7 h : la date est gardée
+#                              mode poussé décidé par l'utilisateur le 12/11, jusqu'au 15/11 6 h : la date est gardée
 #                              par la ligne de crontab). Fichiers <date>-14h.*, pistes M<jjmm>-n à la suite de celles
 #                              de la nuit, partie « management-14h » déposée dans le rapport du matin suivant.
 #         lancer.sh essai      essai bon marché (petit modèle, données à part, aucun mail ; teste aussi la garde)

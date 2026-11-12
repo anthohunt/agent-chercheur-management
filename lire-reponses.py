@@ -43,4 +43,17 @@ for i in d[0].split():
             vus.add(pid.upper())
             out.append({"id": pid.upper(), "decision": dec.lower(), "date": m.get("Date"), "citation": (dec + ids).strip()[:300]})
 M.logout()
+# Décisions prises en session (fichier JSON Lines {"id", "decision", "date", "citation"}), quand la machine en tient un :
+# chemin dans la variable DECISIONS ou dans decisions.local à côté de ce script (hors dépôt).
+import os, pathlib
+_loc = pathlib.Path(__file__).with_name("decisions.local")
+DECISIONS = os.environ.get("DECISIONS") or (_loc.read_text().strip() if _loc.exists() else "")
+if DECISIONS and os.path.exists(DECISIONS):
+    for ligne in open(DECISIONS, encoding="utf-8"):
+        try:
+            x = json.loads(ligne)
+        except ValueError:
+            continue
+        if re.fullmatch(r"M\d{4}-\d+", x.get("id", "")) and x["id"] not in vus:
+            vus.add(x["id"]); out.append({k: x.get(k) for k in ("id", "decision", "date", "citation")})
 print(json.dumps(out, ensure_ascii=False))

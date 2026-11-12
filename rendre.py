@@ -29,7 +29,7 @@ def main():
     if r.get("resume"):
         h.append('<p style="margin:0 0 14px;color:#4b4b4b">%s</p>' % E(r["resume"]))
     h.append('<p style="background:#f1f1ef;padding:10px 12px;border-radius:6px;margin:0 0 18px"><b>Pour décider</b> : '
-             'réponds à ce mail, une ligne par décision : « oui » ou « non » suivi du numéro de la piste (en gras au-dessus '
+             'en réponse à ce mail ou dans une session avec ton agent, une ligne par décision : « oui » ou « non » suivi du numéro de la piste (en gras au-dessus '
              'de chacune). Rien ne change dans le système sans ton oui ; un oui lance d\'abord le petit essai.</p>')
     for p in P:
         f = p.get("fait") or {}

@@ -30,7 +30,7 @@ MODE="${1:-passe}"
 if [ "$MODE" = decider ]; then
   exec python3 "$ICI/pistes.py" decider "$ICI/donnees/pistes.json" "${2:?id}" "${3:?oui|non|appliquee}" "${4:-}"
 fi
-S=""; HEURES=24
+S=""; HEURES=168   # une fois par semaine (Anthony, 14/11) : lit les 7 derniers jours
 case "$MODE" in passe) D="$ICI/donnees";; 14h) D="$ICI/donnees"; S="-14h";; essai) D="$ICI/donnees-essai"; FORCE=1;; *) echo "usage : lancer.sh [14h|essai|decider …]"; exit 2;; esac
 J=$(TZ=Europe/Paris date +%F); K="$J$S"   # K : nom des fichiers de ce passage (la nuit : la date seule)
 if [ "${FORCE:-0}" != 1 ]; then

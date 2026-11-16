@@ -43,7 +43,7 @@ exec 9>/tmp/chercheur-management.lock; flock -n 9 || { echo "un passage tourne d
 DEST=""; VPS_DIR=""; MANAGER_DIR=""; MANAGER_CONFIGS=""; BOITE_IDENTIFIANTS=""; SIGNALER=""
 # Machine de l'agent (11/11) : par défaut une machine à part qui joint celle du manager par ssh (alias « vps ») et lance
 # claude elle-même. Sur la machine du manager : MACHINE_DU_MANAGER=1 (commandes locales) ; CLAUDE_CMD peut alors être un
-# lanceur qui fait tourner le passage ailleurs (perso-claude : poste prêté, copie de travail effacée et vérifiée).
+# lanceur qui fait tourner le passage ailleurs (perso-claude : poste de calcul, copie de travail effacée et vérifiée).
 MACHINE_DU_MANAGER=""; CLAUDE_CMD=claude; JETON_FICHIER="$HOME/.claude-%s/.oauth-token"; CONFIG_CLAUDE="$HOME/.claude-%s"
 [ -f "$ICI/donnees/lancer.local" ] && . "$ICI/donnees/lancer.local"
 [ -n "$VPS_DIR" ] && [ -n "$MANAGER_DIR" ] && [ -n "$MANAGER_CONFIGS" ] || { echo "donnees/lancer.local incomplet (VPS_DIR, MANAGER_DIR, MANAGER_CONFIGS)"; exit 2; }
@@ -121,7 +121,7 @@ lance() {  # lance <consigne> <--session-id|--resume>
   RC=$?; log "claude fini : code $RC $(date -u +%FT%TZ)"
 }
 lance "$D/logs/$K.consigne.md" --session-id
-if [ "$RC" = 75 ]; then   # lanceur sur machine prêtée : aucune machine libre (ou reprise par son propriétaire) → rattrapage suivant
+if [ "$RC" = 75 ]; then   # lanceur sur poste de calcul : aucune machine libre (ou reprise par son propriétaire) → rattrapage suivant
   rm -f "$D/logs/$K.lance"; rm -rf "$W"; log "aucune machine libre pour le passage : nouvel essai au rattrapage suivant"; log "fin passe : code 6 $(date -u +%FT%TZ)"; exit 6
 fi
 

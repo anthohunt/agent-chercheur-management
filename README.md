@@ -13,7 +13,7 @@ Every Monday, it rereads the week of the manager that runs the other agents, and
 - **Rereads the manager's week, anonymised**: the last 7 days of the manager session that runs a fleet of Claude Code agents (conversations, messages from sessions, log, alerts, rules), anonymised before reading.
 - **Looks for what worked elsewhere, with sources**: what research and teams running multi-agent systems have shown on the same problems (restarts, long waits, crashed sessions, repeated questions, cost).
 - **Suggests 1 to 3 proven leads, with figures.** Each lead starts from a real fact of the week, cites its evidence, gives a worked example with figures on this system and suggests a small risk-free trial.
-- **Sends the 7 a.m. email: yes or no per lead.** You answer one line per lead ("oui M1211-1" or "non M1211-2"); the researcher reads the replies at its next pass. A yes changes nothing on its own: it tells the manager, which first runs the small trial. A week without a solid lead gives a one-line email rather than a weak lead.
+- **Sends the 7 a.m. email: yes or no per lead.** The email opens with a sentence to paste into a Claude Code session; you decide there, one lead at a time (`decider M1211-1 oui|non`), never by replying to the email; the researcher reads the decisions at its next pass. A yes changes nothing on its own: it tells the manager, which first runs the small trial. A week without a solid lead gives a one-line email rather than a weak lead.
 
 It is meant for anyone who runs several Claude Code agents under a manager agent and wants that management to improve on facts.
 
@@ -22,7 +22,7 @@ It is meant for anyone who runs several Claude Code agents under a manager agent
 ```mermaid
 %%{init: {"flowchart": {"curve": "step"}}}%%
 flowchart TD
-    A["Monday 4:40 a.m. cron"] --> B["Replies to earlier emails read"]
+    A["Monday 4:40 a.m. cron"] --> B["Decisions taken in session read"]
     B --> C["Manager's week and rules copied, read-only"]
     C --> D["anonymiser.py: names, places, addresses, identifiers replaced; raw copy deleted"]
     D --> E["Claude Code in a closed folder: no shell, web search behind a guard"]
@@ -66,7 +66,7 @@ Taken from the scripts of this repository:
 - Python 3 (standard library only).
 - [Claude Code](https://code.claude.com/docs/en/overview) installed and logged in on the machine that runs the pass (`lancer.sh` uses Claude Opus with high effort for the weekly pass, a small model for `essai`).
 - SSH access to the machine where the manager runs (where `extraire-journee.py` reads the week, read-only), unless the agent runs on that machine itself (`MACHINE_DU_MANAGER=1`).
-- A mail queue on the machine that holds the mailbox, for `programmer-mail.sh` and `lire-reponses.py`.
+- A mail queue on the machine that holds the mailbox, for `programmer-mail.sh`; `lire-reponses.py` reads the decisions file written by `decider`.
 
 Cost: one pass a week with Claude Opus, high effort, 90 minutes at most: about 0.1 to 0.5 % of the weekly quota of a Claude Max subscription per pass.
 

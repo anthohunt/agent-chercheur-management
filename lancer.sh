@@ -59,7 +59,7 @@ distant() {  # commande sur la machine du manager (comme ssh : arguments joints 
   if [ -n "$MACHINE_DU_MANAGER" ]; then bash -c "$*"; else ssh -o BatchMode=yes -o ConnectTimeout=15 vps "$*"; fi
 }
 
-# 1. Réponses de l'utilisateur aux mails précédents (« oui M1211-1 », « non M1211-2 ») ; un oui = signal au manager
+# 1. Décisions d'Anthony prises en session (decider M1211-1 oui|non, mail en lecture seule depuis le 26/11) ; un oui = signal au manager
 if [ "$MODE" != essai ]; then
   if distant "BOITE_IDENTIFIANTS='$BOITE_IDENTIFIANTS' python3 $VPS_DIR/lire-reponses.py" > "$D/reponses.json" 2>> "$L"; then
     python3 "$ICI/pistes.py" reponses "$D/pistes.json" "$D/reponses.json" > "$D/reponses.out" 2>> "$L"; cat "$D/reponses.out" >> "$L"

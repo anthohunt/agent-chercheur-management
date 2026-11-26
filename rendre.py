@@ -2,7 +2,7 @@
 """Met en page le rapport d'une nuit pour le mail de 7 h, et écrit sur la sortie la ligne de résumé en gras (lue par le
 tableau des agents permanents).  usage : rendre.py <rapport.json> <pistes.json> <sortie.html>
 Nuit sans piste solide (critère validé, choix A) : le mail part quand même, en une ligne."""
-import html, json, sys
+import html, json, os, sys
 
 NOMS = {"aiguillage": "Aiguillage du travail", "suivi": "Suivi des sessions et des agents",
         "decisions": "Décisions et délégation", "ressources": "Machines, comptes et coût",
@@ -13,6 +13,20 @@ E = html.escape
 POLICE = "font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#2f3437;line-height:1.5;font-size:15px"
 
 
+def bloc_copier(phrase):
+    """Bloc encadré en tête du mail (décision d'Anthony du 26/11/2026) : la phrase à coller telle quelle dans une session
+    Claude Code ; le mail lui-même est en lecture seule, on n'y répond pas."""
+    return ('<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;'
+            'margin:0 0 16px"><tr><td style="border:1px solid #1d4ed8;border-radius:8px;background:#eff4ff;padding:10px 12px">'
+            '<div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#1d4ed8;font-weight:bold;'
+            'margin:0 0 6px">À copier dans une session</div>'
+            '<div style="font-family:Consolas,Menlo,monospace;font-size:13px;line-height:1.45;color:#101828;'
+            'word-break:break-word">%s</div></td></tr></table>' % E(phrase))
+
+
+DECIDER = "/home/claude/mail-du-matin/decider"
+
+
 def bloc(titre, texte):
     return ('<p style="margin:6px 0"><span style="color:#6b6b6b">%s</span><br>%s</p>' % (E(titre), E(texte))) if texte else ""
 
@@ -20,18 +34,22 @@ def bloc(titre, texte):
 def main():
     r = json.load(open(sys.argv[1], encoding="utf-8"))
     P = r.get("pistes", [])
+    chemin = os.path.abspath(sys.argv[1])
     if not P:
+        phrase = ("Lis %s : le chercheur du management n'a rien trouvé de solide cette semaine ; dis-moi en deux lignes "
+                  "ce qui a manqué et s'il faut changer sa consigne." % chemin)
         open(sys.argv[3], "w", encoding="utf-8").write(
-            ('<div style="%s">Rien de solide %s : aucune piste n\'a réuni sa preuve, son exemple chiffré et son essai sans risque.</div>'
-             % (POLICE, "à ce passage de 14 h" if r.get("creneau") else "cette nuit")))
+            ('<div style="%s;max-width:680px">%sRien de solide %s : aucune piste n\'a réuni sa preuve, son exemple chiffré et son essai sans risque.</div>'
+             % (POLICE, bloc_copier(phrase), "à ce passage de 14 h" if r.get("creneau") else "cette nuit")))
         print("**Rien de solide %s : %s**" % ("à 14 h" if r.get("creneau") else "cette nuit", " ; ".join(r.get("manque", []))[:300]))
         return
-    h = ['<div style="%s;max-width:680px">' % POLICE, '<h2 style="font-size:20px;margin:0 0 4px">%s</h2>' % E(r["sujet"])]
+    phrase = ("Lis %s et traitons ensemble les pistes du chercheur du management (%s), une à la fois ; chaque décision "
+              "s'enregistre par %s <piste> oui|non \"mes mots\" (un oui lance d'abord le petit essai)."
+              % (chemin, ", ".join(p["id"] for p in P), DECIDER))
+    h = ['<div style="%s;max-width:680px">' % POLICE, bloc_copier(phrase),
+         '<h2 style="font-size:20px;margin:0 0 4px">%s</h2>' % E(r["sujet"])]
     if r.get("resume"):
         h.append('<p style="margin:0 0 14px;color:#4b4b4b">%s</p>' % E(r["resume"]))
-    h.append('<p style="background:#f1f1ef;padding:10px 12px;border-radius:6px;margin:0 0 18px"><b>Pour décider</b> : '
-             'en réponse à ce mail ou dans une session avec ton agent, une ligne par décision : « oui » ou « non » suivi du numéro de la piste (en gras au-dessus '
-             'de chacune). Rien ne change dans le système sans ton oui ; un oui lance d\'abord le petit essai.</p>')
     for p in P:
         f = p.get("fait") or {}
         h.append('<div style="border:1px solid #e3e2e0;border-radius:8px;padding:12px 14px;margin:0 0 14px">')

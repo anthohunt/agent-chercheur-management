@@ -88,6 +88,9 @@ Domaines : **aiguillage** (qui fait quoi, sur quelle machine, ouverture et ferme
 (surveiller, relancer, débloquer), **decisions** (ce qui remonte à l'utilisateur, délégation, questions),
 **ressources** (machines, comptes, quota, coût), **communication** (messages, notifications, rapports).
 
+## Économie de jetons, à chaque passage (demande d'Anthony, 27/11 : « j'ai l'impression de dépenser de plus en plus de tokens et je voudrais quand même garder le contrôle »)
+Lis `contexte/couts-semaine.txt` (quota de la semaine des deux comptes, répartition par projet et par session, crédits API). Donne en tête de ton rapport, en 5 lignes au plus : le % de la semaine de chaque compte, les 3 plus gros consommateurs et la cause probable de chacun (modèle trop gros pour la tâche, sous-agents nombreux ou qui durent, contexte qui grossit, vérifications répétées, boucles, appels un par un au lieu d'un lot…). Puis, parmi tes pistes, au moins une piste d'économie chiffrée (gain estimé en % de la semaine), cherchée en ligne quand c'est une technique (cache des requêtes, modèle plus petit pour les tâches simples, traitement par lots, contexte réduit, résumés, modèle local), avec son petit essai. Rien ne change sans le oui d'Anthony.
+
 Écris en français simple, sans jargon non expliqué, sans formule accrocheuse. Termine quand le fichier est écrit ; ta
 réponse finale tient en une ligne.
 

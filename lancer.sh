@@ -82,7 +82,9 @@ for f in CLAUDE.md privileges.md delegation.md; do
   distant "cat $MANAGER_DIR/$f" > "$B/regles/$f" 2>> "$L" || log "règle $f non recopiée"
 done
 mv "$B/regles/CLAUDE.md" "$B/regles/CLAUDE-manager.md" 2>/dev/null
-distant "timeout 90 python3 $MANAGER_DIR/cout-taches.py semaine" > "$B/couts-semaine.txt" 2>> "$L" || log "coûts non relevés"
+# 27/11 (Anthony) : économie de jetons = le quota des deux comptes, la répartition par projet et session, et les crédits API
+{ for c in yahoo gmail; do echo "### Compte $c"; distant "timeout 120 python3 $MANAGER_DIR/cout-taches.py semaine $c"; echo; done
+  echo "### Crédits API (clés gmail, mines, yahoo)"; distant "/home/claude/bin/credit-api etat"; } > "$B/couts-semaine.txt" 2>> "$L" || log "coûts non relevés"
 
 # 3. Anonymisation, puis dossier de travail : le contexte anonyme, l'historique, la consigne, le seul fichier qu'il écrit
 rm -rf "$W"; mkdir -p "$W/sortie" "$W/contexte"
